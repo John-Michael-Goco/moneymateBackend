@@ -1,3 +1,5 @@
 TO DO:::
 
-Add Layout for the view Account (Transactions, Analytics for Expenses)
+Fetch transactions by month for the Transactions Fragment   
+
+Create View Transactions, Delete Transaction with confirmation if add the balance to the account or not, and Update Transaction

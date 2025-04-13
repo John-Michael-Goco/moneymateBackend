@@ -19,7 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Check if the account already exists
-    $checkSql = "SELECT * FROM `accounts` WHERE `account_number` = ? AND `userID` = ? AND `account_status` != 'Deleted'";
+    $checkSql = "SELECT * FROM `accounts` 
+    WHERE (`account_number` = ? OR `account_name` = ?) AND `userID` = ? AND `account_status` != 'Deleted'";
     if ($checkStmt = $conn->prepare($checkSql)) {
         $checkStmt->bind_param("ss", $account_number, $userID);
         $checkStmt->execute();

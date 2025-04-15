@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $account_name = trim($_POST["account_name"]);
 
     // Step 1: Get the accountID and balance
-    $getAccountSql = "SELECT `accountID`, `balance` FROM `accounts` WHERE `account_type` = ? AND `account_name` = ? AND `userID` = ?";
+    $getAccountSql = "SELECT `accountID`, `balance` FROM `accounts` WHERE `account_type` = ? AND `account_name` = ? AND `userID` = ? AND `account_status` != 'Deleted'";
     $stmt = $conn->prepare($getAccountSql);
     $stmt->bind_param("sss", $account_type, $account_name, $userID);
     $stmt->execute();

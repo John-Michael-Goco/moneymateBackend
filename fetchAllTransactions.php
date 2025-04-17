@@ -2,10 +2,6 @@
 require "./connect.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!isset($_POST["accountID"]) || empty(trim($_POST["accountID"]))) {
-        echo json_encode(["status" => "failed", "message" => "Invalid or missing accountID"]);
-        exit;
-    }
 
     if (!isset($_POST["userID"]) || empty(trim($_POST["userID"]))) {
         echo json_encode(["status" => "failed", "message" => "Invalid or missing userID"]);
@@ -13,11 +9,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $userID = trim($_POST["userID"]);
-    $accountID = trim($_POST["accountID"]);
 
-    $sql = "SELECT * FROM `transactions` WHERE `accountID` = ? AND `userID` = ? AND `transaction_status` != 'Deleted' ORDER BY `transaction_date` DESC";
+    // Updated ORDER BY clause
+    $sql = "SELECT * FROM `transactions` 
+            WHERE `userID` = ? AND `transaction_status` != 'Deleted' 
+            ORDER BY `transaction_date` DESC, `transaction_type` ASC";
+
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("ss", $accountID, $userID);
+        $stmt->bind_param("s", $userID);
         $stmt->execute();
         $result = $stmt->get_result();
 

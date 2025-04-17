@@ -10,10 +10,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $userID = trim($_POST["userID"]);
 
-    // Updated ORDER BY clause
-    $sql = "SELECT * FROM `transactions` 
-            WHERE `userID` = ? AND `transaction_status` != 'Deleted' 
-            ORDER BY `transaction_date` DESC, `transaction_type` ASC";
+    $sql = "SELECT t.* 
+            FROM `transactions` t
+            INNER JOIN `accounts` a ON t.accountID = a.accountID
+            WHERE t.userID = ? 
+            AND t.transaction_status != 'Deleted' 
+            AND a.account_status != 'Deleted'
+            ORDER BY t.transaction_date DESC, t.transaction_type ASC";
 
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("s", $userID);
@@ -33,4 +36,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 } else {
     echo json_encode(["status" => "failed", "message" => "Invalid request method"]);
 }
+
 $conn->close();

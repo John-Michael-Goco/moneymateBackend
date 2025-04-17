@@ -6,8 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $budget_name = trim($_POST["budget_name"]);
     $category = trim($_POST["category"]);
     $amount = trim($_POST["amount"]);
-    $start_date = trim($_POST["start_date"]);
-    $end_date = trim($_POST["end_date"]);
     $budget_status = "Listed";
 
     // Check if the budget already exists
@@ -21,11 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo json_encode(["status" => "exists", "message" => "Budget already exists."]);
         } else {
             // Insert the new budget
-            $sql = "INSERT INTO `budgets` (`userID`, `budget_name`, `category`, `amount`, `start_date`, `end_date`, `budget_status`)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO `budgets` (`userID`, `budget_name`, `category`, `amount`, `budget_status`)
+                    VALUES (?, ?, ?, ?, ?)";
 
             if ($stmt = $conn->prepare($sql)) {
-                $stmt->bind_param("sssdsss", $userID, $budget_name, $category, $amount, $start_date, $end_date, $budget_status);
+                $stmt->bind_param("sssds", $userID, $budget_name, $category, $amount, $budget_status);
 
                 if ($stmt->execute()) {
                     echo json_encode(["status" => "success", "message" => "Budget created successfully"]);

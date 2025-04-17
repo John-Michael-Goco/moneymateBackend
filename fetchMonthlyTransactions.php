@@ -11,8 +11,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $userID = trim($_POST["userID"]);
 
     // Group by month and transaction_type
-    $sql = "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS monthTitle, transaction_type, SUM(amount) AS totalAmount
-        FROM `transactions` WHERE `userID` = ? AND `transaction_status` != 'Deleted' GROUP BY monthTitle, transaction_type ORDER BY monthTitle DESC, transaction_type ASC";
+    $sql = "SELECT DATE_FORMAT(t.transaction_date, '%Y-%m') AS monthTitle, t.transaction_type, 
+                SUM(t.amount) AS totalAmount
+                FROM `transactions` t
+                INNER JOIN `accounts` a ON t.accountID = a.accountID
+                WHERE t.userID = ? 
+                AND t.transaction_status != 'Deleted' 
+                AND a.account_status != 'Deleted'
+                GROUP BY monthTitle, t.transaction_type 
+                ORDER BY monthTitle DESC, t.transaction_type ASC";
+
 
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("s", $userID);

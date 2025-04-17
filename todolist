@@ -1,3 +1,3 @@
 TO DO:::
 
-Fetch transactions by month for the Transactions Fragment
+Check if the account is deleted, and if deleted dont show on the fetch all transactions and monthly transactions

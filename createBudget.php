@@ -9,9 +9,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $budget_status = "Listed";
 
     // Check if the budget already exists
-    $checkSql = "SELECT * FROM `budgets` WHERE `userID` = ? AND `budget_name` = ? AND `budget_status` != 'Deleted'";
+    $checkSql = "SELECT * FROM `budgets` WHERE `userID` = ? AND `category` = ? AND `budget_status` != 'Deleted'";
     if ($checkStmt = $conn->prepare($checkSql)) {
-        $checkStmt->bind_param("ss", $userID, $budget_name);
+        $checkStmt->bind_param("ss", $userID, $category);
         $checkStmt->execute();
         $result = $checkStmt->get_result(); 
 

@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Check if accountID is already associated with another goal (that’s ongoing and not deleted)
-    $checkGoalSql = "SELECT * FROM `goals` WHERE `accountID` = ? AND `userID` = ? AND `goal_status` != 'Deleted' AND `goal_completion` != 'Completed'";
+    $checkGoalSql = "SELECT * FROM `goals` WHERE `accountID` = ? AND `userID` = ? AND `goal_status` != 'Deleted' AND `goal_completion` != 'Complete'";
     $stmt = $conn->prepare($checkGoalSql);
     $stmt->bind_param("ss", $accountID, $userID);
     $stmt->execute();

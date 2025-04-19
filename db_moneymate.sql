@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 01, 2025 at 01:40 PM
+-- Generation Time: Apr 19, 2025 at 07:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,13 +41,80 @@ CREATE TABLE `accounts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `accounts`
+-- Table structure for table `bills`
 --
 
-INSERT INTO `accounts` (`accountID`, `userID`, `account`, `account_type`, `account_logo`, `account_name`, `account_number`, `currency`, `balance`, `account_status`, `created_at`) VALUES
-(1, 6, 'Cash', 'Cash', '2131230869', 'BPI', 100200300400, 'PHP (₱)', 10000.00, 'Listed', '2025-03-29 13:40:37'),
-(12, 6, 'Investment', 'Crypto', '2131230856', 'Binance', 123123123123, 'PHP (₱)', 10000.00, 'Listed', '2025-03-30 15:02:55');
+CREATE TABLE `bills` (
+  `billID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `accountID` int(11) NOT NULL,
+  `bill_name` varchar(100) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `due_date` date NOT NULL,
+  `recurrance` varchar(100) NOT NULL,
+  `bill_completion` varchar(100) NOT NULL,
+  `bill_status` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `budgets`
+--
+
+CREATE TABLE `budgets` (
+  `budgetID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `budget_name` varchar(100) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `budget_status` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `goals`
+--
+
+CREATE TABLE `goals` (
+  `goalID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `accountID` int(11) NOT NULL,
+  `goal_title` varchar(100) NOT NULL,
+  `start_date` date NOT NULL,
+  `target_date` date NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `goal_completion` varchar(100) NOT NULL,
+  `goal_status` varchar(100) NOT NULL,
+  `completed_at` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `transactionID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `accountID` int(11) NOT NULL,
+  `transaction_name` varchar(100) NOT NULL,
+  `amount` decimal(15,2) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `transaction_type` varchar(100) NOT NULL,
+  `transaction_date` date NOT NULL,
+  `notes` text DEFAULT NULL,
+  `transaction_status` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -67,13 +134,6 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`userID`, `first_name`, `last_name`, `nickname`, `email`, `hash_password`, `account_status`, `created_at`) VALUES
-(6, 'John Michael', 'Goco', 'Mike', 'johnmichaelgoco@gmail.com', '$2y$10$z4rxNO8EW2G858SPABGzZuy7Q.POOO9fw7Uzr7uCUSkxSLH5uMany', 'Active', '2025-03-23 08:25:31');
-
---
 -- Indexes for dumped tables
 --
 
@@ -83,6 +143,37 @@ INSERT INTO `users` (`userID`, `first_name`, `last_name`, `nickname`, `email`, `
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`accountID`),
   ADD KEY `user_id` (`userID`);
+
+--
+-- Indexes for table `bills`
+--
+ALTER TABLE `bills`
+  ADD PRIMARY KEY (`billID`),
+  ADD KEY `bills_userID` (`userID`),
+  ADD KEY `bills_accountID` (`accountID`);
+
+--
+-- Indexes for table `budgets`
+--
+ALTER TABLE `budgets`
+  ADD PRIMARY KEY (`budgetID`),
+  ADD KEY `budgets_userID` (`userID`);
+
+--
+-- Indexes for table `goals`
+--
+ALTER TABLE `goals`
+  ADD PRIMARY KEY (`goalID`),
+  ADD KEY `goal_userID` (`userID`),
+  ADD KEY `goal_accountID` (`accountID`);
+
+--
+-- Indexes for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD PRIMARY KEY (`transactionID`),
+  ADD KEY `accountID` (`accountID`),
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `users`
@@ -98,7 +189,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `accountID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `accountID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `bills`
+--
+ALTER TABLE `bills`
+  MODIFY `billID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `budgets`
+--
+ALTER TABLE `budgets`
+  MODIFY `budgetID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `goals`
+--
+ALTER TABLE `goals`
+  MODIFY `goalID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `transactionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -115,6 +230,33 @@ ALTER TABLE `users`
 --
 ALTER TABLE `accounts`
   ADD CONSTRAINT `user_id` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `bills`
+--
+ALTER TABLE `bills`
+  ADD CONSTRAINT `bills_accountID` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`accountID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bills_userID` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `budgets`
+--
+ALTER TABLE `budgets`
+  ADD CONSTRAINT `budgets_userID` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `goals`
+--
+ALTER TABLE `goals`
+  ADD CONSTRAINT `goal_accountID` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`accountID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `goal_userID` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `accountID` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`accountID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `userID` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

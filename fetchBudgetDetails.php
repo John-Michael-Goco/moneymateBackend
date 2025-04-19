@@ -24,11 +24,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $currentMonth = date("m");
             $currentYear = date("Y");
 
-            // Calculate total spent for the same category this month/year
-            $totalSQL = "SELECT SUM(amount) AS total_spent FROM `transactions`
-                        WHERE `userID` = ? AND `category` = ?
-                        AND `transaction_status` != 'Deleted'
-                        AND MONTH(`transaction_date`) = ? AND YEAR(`transaction_date`) = ?";
+            // Join with accounts and exclude deleted ones
+            $totalSQL = "SELECT SUM(t.amount) AS total_spent 
+                FROM `transactions` t
+                INNER JOIN `accounts` a ON t.accountID = a.accountID
+                WHERE t.userID = ? 
+                AND t.category = ? 
+                AND t.transaction_status != 'Deleted' 
+                AND a.account_status != 'Deleted'
+                AND MONTH(t.transaction_date) = ? 
+                AND YEAR(t.transaction_date) = ?";
+
             $totalStmt = $conn->prepare($totalSQL);
             $totalStmt->bind_param("ssii", $userID, $category, $currentMonth, $currentYear);
             $totalStmt->execute();

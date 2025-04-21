@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 INNER JOIN `accounts` a ON t.accountID = a.accountID
                 WHERE t.userID = ? 
                 AND t.transaction_status != 'Deleted' 
+                AND t.category != 'Transfer'
                 AND a.account_status != 'Deleted'
                 GROUP BY monthTitle, t.transaction_type 
                 ORDER BY monthTitle DESC, t.transaction_type ASC";

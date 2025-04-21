@@ -2,6 +2,7 @@
 require "./connect.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     if (!isset($_POST["userID"]) || empty(trim($_POST["userID"]))) {
         echo json_encode(["status" => "failed", "message" => "Invalid or missing userID"]);
         exit;
@@ -9,24 +10,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $userID = trim($_POST["userID"]);
 
-    $sql = "SELECT 
-                SUM(`balance`) AS networth, 
-                COUNT(*) AS account_count 
-            FROM `accounts` 
-            WHERE `userID` = ? AND `account_status` != 'Deleted'";
+    $sql = "SELECT g.*, a.balance 
+            FROM `goals` g
+            INNER JOIN `accounts` a ON g.accountID = a.accountID
+            WHERE g.userID = ? 
+            AND g.goal_status != 'Deleted' 
+            AND g.goal_completion != 'Complete'
+            AND a.account_status != 'Deleted'
+            LIMIT 3";
 
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("s", $userID);
         $stmt->execute();
-        $stmt->bind_result($networth, $account_count);
-        $stmt->fetch();
+        $result = $stmt->get_result();
 
-        echo json_encode([
-            "status" => "success",
-            "networth" => $networth ?? 0,
-            "account_count" => $account_count ?? 0
-        ]);
+        $goals = [];
+        while ($row = $result->fetch_assoc()) {
+            $row["account_balance"] = $row["balance"];
+            unset($row["balance"]);
+            $goals[] = $row;
+        }
 
+        echo json_encode(["status" => "success", "goals" => $goals]);
         $stmt->close();
     } else {
         echo json_encode(["status" => "failed", "message" => "Database error: " . $conn->error]);
@@ -36,4 +41,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
-?>
